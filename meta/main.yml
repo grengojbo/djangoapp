@@ -2,7 +2,7 @@
 galaxy_info:
   author: Christo Crampton
   description: (still in alpha) Deploys one or more django apps onto a server with: gunicorn, nginx, upstart
-  company: 
+  #company: 
   # Some suggested licenses:
   # - BSD (default)
   # - MIT
