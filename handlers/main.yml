@@ -1,0 +1,5 @@
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: restart app
+  command: restart {{item.djangoapp_projectname}}    

@@ -1,0 +1,92 @@
+- name: install required packages
+  apt: pkg={{ item.name }} state=installed
+  with_items:
+    - {'name': 'git'}
+    - {'name': 'libpq-dev'}
+  tags:
+    - install
+
+- name: Create required directories
+  file: path={{item.path}} state=directory
+  with_items:
+    - { path : '/var/www/' }
+    - { path : '/srv/venvs/' }
+    - { path : '/var/log/gunicorn/' }        
+  tags:
+    - install
+
+## this is a bit of a hack ..
+- name: Upload SSH key.
+  copy: src=~/.ssh/id_rsa dest=~/.ssh/id_rsa mode=0600
+  tags:
+    - install
+
+
+- name: Create directory for nginx logs
+  file: path=/var/log/nginx/{{item.djangoapp_projectname}} state=directory
+  with_items: django_apps
+  tags:
+    - install
+
+
+- name: Add server block    
+  template: 
+    src='server_block.conf' 
+    dest='/etc/nginx/sites-enabled/{{item.djangoapp_projectname}}' 
+  with_items: django_apps
+  notify: restart nginx
+  tags:
+    - install
+
+- name: Add upstart
+  template: 
+    src='upstart.conf' 
+    dest='/etc/init/{{item.djangoapp_projectname}}.conf'
+  with_items: django_apps
+  tags:
+    - install
+
+- name: Update code from git.
+  git: repo={{item.djangoapp_repo}}
+       dest=/var/www/{{item.djangoapp_projectname}}
+       version={{item.djangoapp_track_branch}}
+       accept_hostkey=yes
+  with_items: django_apps
+  tags:
+    - install
+    - deploy
+
+- name: Custom local_settings
+  template: 
+    src='local_settings.py'
+    dest='/var/www/{{item.djangoapp_projectname}}/{{item.path_to_managepy}}/local_settings.py'  
+  with_items: django_apps
+  tags:
+    - install
+
+
+
+- name: Install requirements
+  pip: requirements=/var/www/{{item.djangoapp_projectname}}/{{item.path_to_requirements}}requirements.txt virtualenv=/srv/venvs/{{item.djangoapp_projectname}}
+  with_items: django_apps
+  tags:
+    - install
+    - deploy
+
+
+- name: Run syncdb
+  django_manage: command=syncdb app_path=/var/www/{{item.djangoapp_projectname}}/{{item.path_to_managepy}} virtualenv=/srv/venvs/{{item.djangoapp_projectname}}
+  with_items: django_apps
+  tags:
+    - install
+    - deploy
+
+- name: Run collectstatic
+  django_manage: command=collectstatic app_path=/var/www/{{item.djangoapp_projectname}}/{{item.path_to_managepy}} virtualenv=/srv/venvs/{{item.djangoapp_projectname}}
+  with_items: django_apps
+  notify: restart app
+  tags:
+    - install
+    - deploy
+
+    
