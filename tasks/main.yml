@@ -91,5 +91,9 @@
 
 - name: Restart app 
   command: restart {{item.djangoapp_projectname}}
+  with_items: django_apps
+  tags:
+    - install
+    - deploy
 
     
