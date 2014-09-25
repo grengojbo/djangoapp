@@ -83,6 +83,7 @@
 
 - name: Run collectstatic
   django_manage: command=collectstatic app_path=/var/www/{{item.djangoapp_projectname}}/{{item.path_to_managepy}} virtualenv=/srv/venvs/{{item.djangoapp_projectname}}
+  ignore_errors: yes
   with_items: django_apps
   notify: restart app
   tags:
