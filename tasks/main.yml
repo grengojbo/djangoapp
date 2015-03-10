@@ -70,6 +70,9 @@
     dest=/var/www/{{item.djangoapp_projectname}}/{{item.path_to_managepy}}/{{item.djangoapp_projectname}}
     line="from local_settings import *"
     state=present
+  with_items: django_apps
+  tags:
+    - install
 
 - name: Install requirements
   pip: requirements=/var/www/{{item.djangoapp_projectname}}/{{item.path_to_requirements}}requirements.txt virtualenv=/srv/venvs/{{item.djangoapp_projectname}}
