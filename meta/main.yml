@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Christo Crampton
-  description: (still in alpha) Deploys one or more django apps ontoa server with gunicorn, nginx, upstart  
+  description: (still in alpha) Deploys one or more django apps on to a server with gunicorn, nginx, upstart  
   license: MIT
   min_ansible_version: 1.2  
   platforms:  
@@ -16,4 +16,5 @@ galaxy_info:
     - roles/Ansibles.python
     - roles/Ansibles.nginx
     - roles/Ansibles.postgresql
+    - roles/toast38coza.djangoapp
     - roles/toast38coza.djangoapp
