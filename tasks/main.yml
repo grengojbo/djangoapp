@@ -68,7 +68,7 @@
 - name: Use local_settings in settings
   lineinfile:
     dest=/var/www/{{item.djangoapp_projectname}}/{{item.path_to_managepy}}/{{item.djangoapp_projectname}}/settings.py
-    line="\nfrom local_settings import *"
+    line="from local_settings import *"
     state=present
   with_items: django_apps
   tags:
