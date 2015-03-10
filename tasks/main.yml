@@ -81,6 +81,13 @@
     - install
     - deploy
 
+- name: Install psycopg2
+  pip: name=psycopg2 virtualenv=/srv/venvs/{{item.djangoapp_projectname}}
+  with_items: django_apps
+  tags:
+    - install
+    - deploy
+
 
 - name: Run syncdb
   django_manage: command=syncdb app_path=/var/www/{{item.djangoapp_projectname}}/{{item.path_to_managepy}} virtualenv=/srv/venvs/{{item.djangoapp_projectname}}
